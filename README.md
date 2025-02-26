@@ -1,9 +1,9 @@
 📈 Stock Market Dashboard
 
 🏆 Team Members
-Meghana Gudipati - mg23488n
-Harshini Gullapally - HG62347N
-Srinath Reddy Baddam - SB40856N
+Meghana Gudipati - mg23488n                    
+Harshini Gullapally - HG62347N           
+Srinath Reddy Baddam - SB40856N         
 Nikhil Varma Dommaraju - ND75630N
 
 📌 Overview
@@ -52,9 +52,9 @@ Our dashboard employs interactive data visualizations to simplify complex stock 
 📌 How to Use
 Clone the Repository
 
-git clone https://github.com/your-repo-link.git
+git clone [https://github.com/your-repo-link.git](https://github.com/Harshinigullapally/Stock-Market-Dashboard.git)
 
-cd stock-market-dashboard
+cd Stock-Market-Dashboard
 
 Install Dependencies
 
@@ -62,7 +62,7 @@ pip install -r requirements.txt
 
 Run the Application
 
-streamlit run app.py
+streamlit run app_dash.py
 
 🏁 Conclusion
 
