@@ -23,7 +23,7 @@ def set_background(image_file):
     st.markdown(css, unsafe_allow_html=True)
 
 # ✅ Set Background Image
-set_background("image.jpg")  # Ensure "image.jpg" exists in the same directory
+set_background("pages/image.jpg")  # Ensure "image.jpg" exists in the same directory
 
 # ✅ Ensure session state is initialized
 if "authenticated" not in st.session_state:
