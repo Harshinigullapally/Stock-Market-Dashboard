@@ -2,8 +2,8 @@ import pymongo
 import bcrypt
 
 # ✅ MongoDB Connection
-MONGO_URI = "mongodb://localhost:27017/"  # Change if using MongoDB Atlas
-client = pymongo.MongoClient(MONGO_URI)
+MONGO_URI = st.secrets["mongo"]["uri"]
+client = MongoClient(MONGO_URI)
 db = client["stock_market_dashboard"]
 users_collection = db["users"]
 
