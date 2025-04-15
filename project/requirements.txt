@@ -26,3 +26,5 @@ mysql-connector-python
 jira
 
 google-generativeai
+
+pymongo
