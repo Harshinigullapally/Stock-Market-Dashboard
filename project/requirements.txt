@@ -1,6 +1,6 @@
 # Core Language & Web App
 streamlit
-python>=3.8
+# python>=3.8
 
 # Data Handling
 pandas
