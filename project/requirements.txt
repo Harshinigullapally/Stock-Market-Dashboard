@@ -34,3 +34,6 @@ lxml
 statsmodels
 
 bcrypt
+
+streamlit-extras
+
