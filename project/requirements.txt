@@ -30,3 +30,6 @@ google-generativeai
 pymongo
 
 lxml
+
+statsmodels
+
