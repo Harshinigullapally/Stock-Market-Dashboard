@@ -33,3 +33,4 @@ lxml
 
 statsmodels
 
+bcrypt
