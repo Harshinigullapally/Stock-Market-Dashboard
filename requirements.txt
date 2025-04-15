@@ -1,20 +1,35 @@
 # Programming Language
 python>=3.8
 
+# Web Framework
+streamlit
+
+# Data Sources / APIs
+yfinance
+
+# Data Handling
+pandas
+numpy
+
 # Data Visualization Libraries
 plotly
 matplotlib
 seaborn
+mplfinance
 
-# Web Framework
-streamlit
+# Machine Learning & Prediction
+scikit-learn
+tensorflow
 
-# Data Sources
-yfinance
-
-# Database
+# Database (optional, depending on usage)
 sqlite3  # Built-in with Python
-mysql-connector-python  # If using MySQL
+mysql-connector-python
 
 # Agile Management Tools
 jira
+
+# Time & Date Handling (included in standard library)
+# datetime, time - No need to include
+
+# Other Helpful Packages
+requests
