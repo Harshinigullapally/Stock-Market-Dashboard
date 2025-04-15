@@ -1,19 +1,13 @@
 import streamlit as st
-import base64
 from db_config import verify_user, add_user
 from streamlit_extras.switch_page_button import switch_page
 
-#st.set_page_config(page_title="Login - Stock Market Dashboard", layout="wide")
-
-# ✅ Function to Set Background Image
-def set_background(image_file):
-    with open(image_file, "rb") as img_file:
-        encoded_string = base64.b64encode(img_file.read()).decode()
-
+# ✅ Set Background from URL
+def set_background_from_url(image_url):
     css = f"""
     <style>
     .stApp {{
-        background-image: url("data:image/jpg;base64,{encoded_string}");
+        background-image: url("{image_url}");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -22,8 +16,8 @@ def set_background(image_file):
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# ✅ Set Background Image
-set_background("image.jpg")  # Ensure "image.jpg" exists in the same directory
+# ✅ Use an online image (replace this URL with any image you like)
+set_background_from_url("https://images.unsplash.com/photo-1542281286-9e0a16bb7366")
 
 # ✅ Ensure session state is initialized
 if "authenticated" not in st.session_state:
@@ -60,9 +54,4 @@ elif option == "Sign Up":
 # ✅ If user is authenticated, show a "Go to Dashboard" button
 if st.session_state.authenticated:
     st.markdown("[Go to Dashboard](app.py)")
-    st.switch_page("app.py")
-
-
-
-# 🚀 Add Logout Button
-
+    switch_page("app.py")
