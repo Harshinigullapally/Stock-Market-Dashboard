@@ -24,3 +24,5 @@ mysql-connector-python
 
 # (Optional) Jira integration if used
 jira
+
+google-generativeai
