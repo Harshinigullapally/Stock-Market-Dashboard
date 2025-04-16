@@ -1,6 +1,5 @@
 import streamlit as st
 from db_config import verify_user, add_user
-from streamlit_extras.switch_page_button import switch_page
 
 # ✅ Set Background from URL
 def set_background_from_url(image_url):
@@ -16,14 +15,14 @@ def set_background_from_url(image_url):
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# ✅ Use an online image (replace this URL with any image you like)
+# ✅ Use an online background image
 set_background_from_url("https://images.unsplash.com/photo-1542281286-9e0a16bb7366")
 
-# ✅ Ensure session state is initialized
+# ✅ Initialize session state
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-# 🚀 **Login UI Layout**
+# 🚀 Login UI
 st.markdown("<h1 style='text-align: center; color: white;'>🔐 Login Page</h1>", unsafe_allow_html=True)
 
 option = st.radio("Select an option:", ["Login", "Sign Up"])
@@ -36,10 +35,10 @@ if option == "Login":
         if verify_user(username, password):
             st.session_state.authenticated = True
             st.session_state.username = username
-            st.success("Login successful! Redirecting...")
-            st.rerun()  # ✅ Refresh the app
+            st.success("✅ Login successful!")
+            st.info("👉 Now click **Dashboard** from the sidebar to continue.")
         else:
-            st.error("Invalid username or password")
+            st.error("❌ Invalid username or password")
 
 elif option == "Sign Up":
     new_username = st.text_input("Create Username:", key="signup_username")
@@ -47,11 +46,11 @@ elif option == "Sign Up":
 
     if st.button("Sign Up"):
         if add_user(new_username, new_password):
-            st.success("Account created successfully! Please login.")
+            st.success("✅ Account created successfully! Please login.")
         else:
-            st.error("Username already exists. Choose a different one.")
+            st.error("⚠️ Username already exists. Choose a different one.")
 
-# ✅ If user is authenticated, show a "Go to Dashboard" button
+# ✅ Optional message after login
 if st.session_state.authenticated:
-    st.markdown("[Go to Dashboard](app.py)")
-    switch_page("app.py")
+    st.markdown("✅ You are logged in as **{}**.".format(st.session_state.username))
+    st.info("👉 Click on **Dashboard** in the sidebar to proceed.")
