@@ -1,4 +1,5 @@
 import streamlit as st
+st.set_page_config(page_title="Stock Market Dashboard", layout="wide")
 import matplotlib.pyplot as plt
 import yfinance as yf
 import pandas as pd
@@ -22,8 +23,6 @@ from Stock_prediction import download_stock_data, predict_with_arima, plot_predi
 ssl._create_default_https_context = ssl._create_unverified_context
 import seaborn as sns
 from sklearn.metrics import classification_report, confusion_matrix
-
-st.set_page_config(page_title="Stock Market Dashboard", layout="wide")
 
 # ✅ Initialize session state
 if "authenticated" not in st.session_state:
