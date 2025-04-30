@@ -2,10 +2,32 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 
+def calculate_intrinsic_value(stock_symbol, discount_rate, growth_rate):
+    try:
+        stock = yf.Ticker(stock_symbol)
+        stock_info = stock.info  # This line can raise YFRateLimitError
+        earnings_per_share = stock_info.get("forwardEps", None)
+        
+        if earnings_per_share is None:
+            st.warning("Earnings per share not available for this stock.")
+            return None
+
+        # Example intrinsic value calculation
+        intrinsic_value = earnings_per_share * (1 + growth_rate) / (discount_rate - growth_rate)
+        return intrinsic_value
+
+    except yf.YFRateLimitError:
+        st.error("Rate limit exceeded by Yahoo Finance. Please wait and try again later.")
+        return None
+    except Exception as e:
+        st.error(f"Unexpected error occurred: {e}")
+        return None
+
 # Set page configuration (must be first command)
 
 
 # Function to fetch S&P 500 stock symbols from Wikipedia
+@st.cache_data(ttl=3600)
 def get_sp500_stocks():
     url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
     tables = pd.read_html(url)
@@ -18,6 +40,7 @@ def get_sp500_stocks():
     return list(zip(sp500_symbols, sp500_names))  # Return a list of (symbol, name) tuples
 
 # Function to calculate intrinsic value
+@st.cache_data(ttl=3600)
 def calculate_intrinsic_value(stock_symbol, discount_rate=0.1, growth_rate=0.05, years=5):
     stock = yf.Ticker(stock_symbol)
     earnings_per_share = stock.info.get("forwardEps", None)
@@ -32,6 +55,7 @@ def calculate_intrinsic_value(stock_symbol, discount_rate=0.1, growth_rate=0.05,
     return round(intrinsic_value, 2)
 
 # Intrinsic Value Page
+@st.cache_data(ttl=3600)
 def intrinsic_value_page():
     st.header("📊 Intrinsic Value Calculator (DCF Method)")
     st.markdown("""
