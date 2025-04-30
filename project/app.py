@@ -8,7 +8,11 @@ def get_stock_data(symbol, period="1y"):
     stock = yf.Ticker(symbol)
     return stock.history(period=period)
 
+stock_symbol = st.text_input("Enter stock symbol", "AAPL")
+period = "1y"
 stock_data = get_stock_data(stock_symbol, period)
+
+st.write(stock_data)
     
 import pandas as pd
 import plotly.graph_objects as go
