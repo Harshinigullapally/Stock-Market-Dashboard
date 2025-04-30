@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 
+@st.cache_data(ttl=3600)
 def calculate_intrinsic_value(stock_symbol, discount_rate, growth_rate):
     try:
         stock = yf.Ticker(stock_symbol)
