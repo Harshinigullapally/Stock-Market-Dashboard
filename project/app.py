@@ -5,14 +5,15 @@ import yfinance as yf
 
 @st.cache_data(ttl=3600)
 def get_stock_data(symbol, period="1y"):
-    stock = yf.Ticker(symbol)
-    return stock.history(period=period)
-
-stock_symbol = st.text_input("Enter stock symbol", "AAPL")
-period = "1y"
-stock_data = get_stock_data(stock_symbol, period)
-
-st.write(stock_data)
+    try:
+        ticker = yf.Ticker(symbol)
+        return ticker.history(period=period)
+    except yf.YFRateLimitError:
+        st.error("Rate limit exceeded. Please wait a while and try again.")
+        return None
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        return None
     
 import pandas as pd
 import plotly.graph_objects as go
