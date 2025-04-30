@@ -2,6 +2,14 @@ import streamlit as st
 st.set_page_config(page_title="Stock Market Dashboard", layout="wide")
 import matplotlib.pyplot as plt
 import yfinance as yf
+
+@st.cache_data(ttl=3600)
+def get_stock_data(symbol, period="1y"):
+    stock = yf.Ticker(symbol)
+    return stock.history(period=period)
+
+stock_data = get_stock_data(stock_symbol, period)
+    
 import pandas as pd
 import plotly.graph_objects as go
 from chatbot import generate_prompt_response
@@ -112,7 +120,7 @@ if selected_tab == "Stock Analysis":
     stock_symbol = st.sidebar.selectbox("Enter Stock Symbol:", SECTORS[sector])
     period = st.sidebar.selectbox("Select Period:", ['1d', '1wk', '1mo', '6mo', '1y', '5y', '10y'])
 
-    stock_data = yf.Ticker(stock_symbol).history(period=period)
+
     if stock_data.empty:
         st.error(f"No data available for {stock_symbol}. Try another stock.")
     else:
