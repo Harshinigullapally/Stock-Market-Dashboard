@@ -112,6 +112,7 @@ stock_notifications()
 
 @st.cache_data(ttl=3600)
 # ✅ Sidebar Navigation
+if selected_option == "Stock Dashboard":
 st.sidebar.header("Navigation")
 selected_tab = st.sidebar.radio("Select a section:", [
     "Stock Analysis", "Nasdaq Stock Visualization", "News Update", "Stock Assistant",
