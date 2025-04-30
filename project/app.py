@@ -18,8 +18,8 @@ from nasdaq_visualization import nasdaq_visualization
 from stock_options import stock_options_page
 import mplfinance as mpf
 
-from datetime import datetime, timedelta
-from Stock_prediction import download_stock_data, predict_with_arima, plot_predictions, predict_with_lstm
+from datetime import datetime,timedelta
+from Stock_prediction import download_stock_data,predict_with_arima,plot_predictions,predict_with_lstm
 ssl._create_default_https_context = ssl._create_unverified_context
 import seaborn as sns
 from sklearn.metrics import classification_report, confusion_matrix
@@ -33,11 +33,15 @@ if "page" not in st.session_state:
     st.session_state.page = "login"
 
 # ✅ Handle logout directly without switch_page
-if st.session_state.get("logout_clicked", False):
+# This will appear at the top of the code to allow redirection before displaying content
+if "logout_clicked" in st.session_state and st.session_state.logout_clicked:
+    # Reset all relevant session state variables
     st.session_state.authenticated = False
     st.session_state.username = None
     st.session_state.page = "login"
     st.session_state.logout_clicked = False
+    
+    # Redirect to login page using a JavaScript hack since switch_page isn't reliable
     st.markdown(
         """
         <meta http-equiv="refresh" content="0; URL=./login">
@@ -49,12 +53,16 @@ if st.session_state.get("logout_clicked", False):
 
 # ✅ Redirect to Login Page if Not Authenticated
 if not st.session_state.authenticated:
-    st.markdown("""
+    # Hide sidebar completely when user is not authenticated
+    hide_sidebar = """
         <style>
             [data-testid="stSidebar"] {display: none;}
             [data-testid="collapsedControl"] {display: none;}
         </style>
-    """, unsafe_allow_html=True)
+    """
+    st.markdown(hide_sidebar, unsafe_allow_html=True)
+    
+    # Redirect to login page using JavaScript since switch_page isn't reliable
     st.markdown(
         """
         <meta http-equiv="refresh" content="0; URL=./login">
@@ -94,7 +102,7 @@ st.sidebar.header("Navigation")
 selected_tab = st.sidebar.radio("Select a section:", [
     "Stock Analysis", "Nasdaq Stock Visualization", "News Update", "Stock Assistant",
     "Quarterly Analysis", "Sector heatmap", "Intrinsic Value", "Stock Screener",
-    "Earnings Calendar", "Stock Options", "Prediction"
+    "Earnings Calendar", "Stock Options","Prediction"
 ])
 
 # ✅ Handle Tabs
@@ -178,12 +186,12 @@ elif selected_tab == "Sector heatmap":
 elif selected_tab == "Quarterly Analysis":
     st.markdown("""
     *"Quarterly"* refers to a period of *three months* in a financial or business context:
-
+    
     - *Q1*: January – March  
     - *Q2*: April – June  
     - *Q3*: July – September  
     - *Q4*: October – December  
-
+    
     ### Importance in Finance
     - 📈 Companies report earnings quarterly  
     - 💰 EPS trends help investors  
@@ -235,8 +243,10 @@ elif selected_tab == "Prediction":
         except Exception as e:
             st.error(f"Error: {e}")
 
-# ✅ Logout Button
+# ✅ Logout - Using a more reliable method (not dependent on switch_page)
 st.sidebar.markdown("---")
 if st.sidebar.button("🚪 Logout"):
+    # Set a flag in session state to trigger logout on next rerun
     st.session_state.logout_clicked = True
+    # Force a rerun of the app to process the logout
     st.rerun()
