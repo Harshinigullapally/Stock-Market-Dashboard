@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from chatbot import generate_prompt_response
 from trend_prediction import trend_prediction
-from wishlist import wishlist_page, get_wishlist, update_wishlist, stock_notifications
+from wishlist import wishlist_page, get_wishlist, update_wishlist
 from news import get_stock_news
 from sector import sector_heatmap
 from constant import SECTORS
@@ -20,7 +20,9 @@ import mplfinance as mpf
 
 from datetime import datetime, timedelta
 from Stock_prediction import download_stock_data, predict_with_arima, plot_predictions, predict_with_lstm
+
 ssl._create_default_https_context = ssl._create_unverified_context
+
 import seaborn as sns
 from sklearn.metrics import classification_report, confusion_matrix
 
@@ -32,7 +34,7 @@ if "wishlist" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "login"
 
-# ✅ Handle logout directly without switch_page
+# ✅ Handle logout directly
 if st.session_state.get("logout_clicked", False):
     st.session_state.authenticated = False
     st.session_state.username = None
@@ -47,7 +49,7 @@ if st.session_state.get("logout_clicked", False):
     )
     st.stop()
 
-# ✅ Redirect to Login Page if Not Authenticated
+# ✅ Redirect to login if not authenticated
 if not st.session_state.authenticated:
     st.markdown("""
         <style>
@@ -86,8 +88,10 @@ if st.session_state["page"] == "wishlist":
         st.rerun()
     st.stop()
 
-# ✅ Notifications
-stock_notifications()
+# ✅ Notifications — FIXED the bug here
+if st.session_state.wishlist:
+    for stock in st.session_state.wishlist:
+        st.write(f"🔔 Notification for {stock}")
 
 # ✅ Sidebar Navigation
 st.sidebar.header("Navigation")
@@ -205,7 +209,6 @@ elif selected_tab == "Stock Options":
 
 elif selected_tab == "Prediction":
     st.title("📈 Stock Price Prediction")
-
     st.markdown("""
     Use this tool to forecast stock prices using ARIMA or LSTM models.
     Select a stock symbol, choose a date range, pick a model, and view predictions.
