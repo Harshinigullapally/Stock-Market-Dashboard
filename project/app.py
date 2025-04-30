@@ -1,6 +1,5 @@
 import streamlit as st
 st.set_page_config(page_title="Stock Market Dashboard", layout="wide")
-
 import matplotlib.pyplot as plt
 import yfinance as yf
 import pandas as pd
@@ -18,13 +17,12 @@ from earnings_calender import earnings_calendar_page
 from nasdaq_visualization import nasdaq_visualization
 from stock_options import stock_options_page
 import mplfinance as mpf
+
 from datetime import datetime, timedelta
 from Stock_prediction import download_stock_data, predict_with_arima, plot_predictions, predict_with_lstm
+ssl._create_default_https_context = ssl._create_unverified_context
 import seaborn as sns
 from sklearn.metrics import classification_report, confusion_matrix
-
-# Handle SSL error for yfinance
-ssl._create_default_https_context = ssl._create_unverified_context
 
 # ✅ Initialize session state
 if "authenticated" not in st.session_state:
@@ -34,16 +32,19 @@ if "wishlist" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "login"
 
-# ✅ Handle logout directly
+# ✅ Handle logout directly without switch_page
 if st.session_state.get("logout_clicked", False):
     st.session_state.authenticated = False
     st.session_state.username = None
     st.session_state.page = "login"
     st.session_state.logout_clicked = False
-    st.markdown("""
+    st.markdown(
+        """
         <meta http-equiv="refresh" content="0; URL=./login">
         <script>window.location.href = "./login";</script>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
     st.stop()
 
 # ✅ Redirect to Login Page if Not Authenticated
@@ -54,10 +55,13 @@ if not st.session_state.authenticated:
             [data-testid="collapsedControl"] {display: none;}
         </style>
     """, unsafe_allow_html=True)
-    st.markdown("""
+    st.markdown(
+        """
         <meta http-equiv="refresh" content="0; URL=./login">
         <script>window.location.href = "./login";</script>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
     st.stop()
 
 # ✅ Load wishlist and user info
@@ -100,34 +104,31 @@ if selected_tab == "Stock Analysis":
     stock_symbol = st.sidebar.selectbox("Enter Stock Symbol:", SECTORS[sector])
     period = st.sidebar.selectbox("Select Period:", ['1d', '1wk', '1mo', '6mo', '1y', '5y', '10y'])
 
-    try:
-        stock_data = yf.Ticker(stock_symbol).history(period=period)
-        if stock_data.empty:
-            st.error(f"No data available for {stock_symbol}. Try another stock.")
-        else:
-            st.subheader(f"{stock_symbol} Stock Price Data - {period}")
-            st.dataframe(stock_data.tail(5))
+    stock_data = yf.Ticker(stock_symbol).history(period=period)
+    if stock_data.empty:
+        st.error(f"No data available for {stock_symbol}. Try another stock.")
+    else:
+        st.subheader(f"{stock_symbol} Stock Price Data - {period}")
+        st.dataframe(stock_data.tail(5))
 
-            fig = go.Figure(data=[go.Candlestick(
-                x=stock_data.index,
-                open=stock_data['Open'],
-                high=stock_data['High'],
-                low=stock_data['Low'],
-                close=stock_data['Close']
-            )])
-            fig.update_layout(title=f'{stock_symbol} Closing Prices - {period}',
-                              xaxis_title='Date',
-                              yaxis_title='Stock Price',
-                              xaxis_rangeslider_visible=False)
-            st.plotly_chart(fig, use_container_width=True)
+        fig = go.Figure(data=[go.Candlestick(
+            x=stock_data.index,
+            open=stock_data['Open'],
+            high=stock_data['High'],
+            low=stock_data['Low'],
+            close=stock_data['Close']
+        )])
+        fig.update_layout(title=f'{stock_symbol} Closing Prices - {period}',
+                          xaxis_title='Date',
+                          yaxis_title='Stock Price',
+                          xaxis_rangeslider_visible=False)
+        st.plotly_chart(fig, use_container_width=True)
 
-            if stock_symbol not in st.session_state.wishlist:
-                if st.button("➕ Add to Wishlist"):
-                    st.session_state.wishlist.append(stock_symbol)
-                    update_wishlist(st.session_state.get("username", ""), st.session_state.wishlist)
-                    st.rerun()
-    except Exception as e:
-        st.error(f"Error fetching stock data: {e}")
+        if stock_symbol not in st.session_state.wishlist:
+            if st.button("➕ Add to Wishlist"):
+                st.session_state.wishlist.append(stock_symbol)
+                update_wishlist(st.session_state.get("username", ""), st.session_state.wishlist)
+                st.rerun()
 
 elif selected_tab == "News Update":
     st.header("📰 Latest Stock Market News")
