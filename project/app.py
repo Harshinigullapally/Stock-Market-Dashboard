@@ -3,7 +3,7 @@ st.set_page_config(page_title="Stock Market Dashboard", layout="wide")
 import matplotlib.pyplot as plt
 import yfinance as yf
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=4600)
 def get_stock_data(symbol, period="1y"):
     try:
         ticker = yf.Ticker(symbol)
@@ -110,6 +110,7 @@ if st.session_state["page"] == "wishlist":
 # ✅ Notifications
 stock_notifications()
 
+@st.cache_data(ttl=3600)
 # ✅ Sidebar Navigation
 st.sidebar.header("Navigation")
 selected_tab = st.sidebar.radio("Select a section:", [
@@ -211,7 +212,8 @@ elif selected_tab == "Quarterly Analysis":
     - 🔍 Analysts use it to predict future performance  
     """)
     trend_prediction()
-
+    
+@st.cache_data(ttl=3600)
 elif selected_tab == "Intrinsic Value":
     intrinsic_value_page()
 
