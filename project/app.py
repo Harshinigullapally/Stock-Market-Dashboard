@@ -1,32 +1,34 @@
 import streamlit as st
-st.set_page_config(page_title="Stock Market Dashboard", layout="wide")
 import matplotlib.pyplot as plt
 import yfinance as yf
 import pandas as pd
 import plotly.graph_objects as go
+import seaborn as sns
+import ssl
+from datetime import datetime, timedelta
+
 from chatbot import generate_prompt_response
 from trend_prediction import trend_prediction
-from wishlist import wishlist_page, get_wishlist, update_wishlist
+from wishlist import wishlist_page, get_wishlist, update_wishlist, stock_notifications
 from news import get_stock_news
 from sector import sector_heatmap
 from constant import SECTORS
-import ssl
 from intrinsic import intrinsic_value_page
 from stock_screener import stock_screener_page
 from earnings_calender import earnings_calendar_page
 from nasdaq_visualization import nasdaq_visualization
 from stock_options import stock_options_page
+from Stock_prediction import download_stock_data, predict_with_arima, plot_predictions, predict_with_lstm
+from sklearn.metrics import classification_report, confusion_matrix
 import mplfinance as mpf
 
-from datetime import datetime, timedelta
-from Stock_prediction import download_stock_data, predict_with_arima, plot_predictions, predict_with_lstm
-
+# ✅ Set SSL context before any data operations
 ssl._create_default_https_context = ssl._create_unverified_context
 
-import seaborn as sns
-from sklearn.metrics import classification_report, confusion_matrix
+# ✅ Streamlit config
+st.set_page_config(page_title="Stock Market Dashboard", layout="wide")
 
-# ✅ Initialize session state
+# ✅ Session state init
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "wishlist" not in st.session_state:
@@ -34,22 +36,15 @@ if "wishlist" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "login"
 
-# ✅ Handle logout directly
+# ✅ Logout Handler
 if st.session_state.get("logout_clicked", False):
     st.session_state.authenticated = False
     st.session_state.username = None
     st.session_state.page = "login"
     st.session_state.logout_clicked = False
-    st.markdown(
-        """
-        <meta http-equiv="refresh" content="0; URL=./login">
-        <script>window.location.href = "./login";</script>
-        """,
-        unsafe_allow_html=True
-    )
-    st.stop()
+    st.experimental_rerun()
 
-# ✅ Redirect to login if not authenticated
+# ✅ Authentication Check
 if not st.session_state.authenticated:
     st.markdown("""
         <style>
@@ -66,32 +61,30 @@ if not st.session_state.authenticated:
     )
     st.stop()
 
-# ✅ Load wishlist and user info
+# ✅ Load User Wishlist
 st.session_state.wishlist = get_wishlist(st.session_state.get("username", ""))
 first_name = st.session_state.get("username", "").split()[0] if st.session_state.get("username") else "User"
 
-# 🔹 Top Navigation
+# 🔹 Header
 col1, col2, col3 = st.columns([5, 1, 1])
 with col1:
     st.title("📊 Stock Market Dashboard")
     st.subheader(f"👋 Hi, Welcome {first_name}!")
 with col3:
-    if st.button(f"🌟 Wishlist ({len(st.session_state.wishlist)})", key="wishlist_button"):
-        st.session_state["page"] = "wishlist"
-        st.rerun()
+    if st.button(f"🌟 Wishlist ({len(st.session_state.wishlist)})"):
+        st.session_state.page = "wishlist"
+        st.experimental_rerun()
 
 # ✅ Wishlist Page
-if st.session_state["page"] == "wishlist":
+if st.session_state.page == "wishlist":
     wishlist_page()
     if st.button("🔙 Back to Dashboard"):
-        st.session_state["page"] = "dashboard"
-        st.rerun()
+        st.session_state.page = "dashboard"
+        st.experimental_rerun()
     st.stop()
 
-# ✅ Notifications — FIXED the bug here
-if st.session_state.wishlist:
-    for stock in st.session_state.wishlist:
-        st.write(f"🔔 Notification for {stock}")
+# ✅ Notifications
+stock_notifications()
 
 # ✅ Sidebar Navigation
 st.sidebar.header("Navigation")
@@ -101,7 +94,7 @@ selected_tab = st.sidebar.radio("Select a section:", [
     "Earnings Calendar", "Stock Options", "Prediction"
 ])
 
-# ✅ Handle Tabs
+# ✅ Stock Analysis
 if selected_tab == "Stock Analysis":
     st.sidebar.header("Select Sector")
     sector = st.sidebar.selectbox("Choose a sector:", list(SECTORS.keys()))
@@ -132,7 +125,7 @@ if selected_tab == "Stock Analysis":
             if st.button("➕ Add to Wishlist"):
                 st.session_state.wishlist.append(stock_symbol)
                 update_wishlist(st.session_state.get("username", ""), st.session_state.wishlist)
-                st.rerun()
+                st.experimental_rerun()
 
 elif selected_tab == "News Update":
     st.header("📰 Latest Stock Market News")
@@ -220,6 +213,7 @@ elif selected_tab == "Prediction":
     start_date = st.date_input("Start Date", datetime.today() - timedelta(days=365))
     end_date = st.date_input("End Date", datetime.today())
     predict_days = st.slider("Days to Predict", min_value=5, max_value=60, value=30)
+
     if st.button("Predict"):
         try:
             df = download_stock_data(ticker, start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
@@ -234,12 +228,11 @@ elif selected_tab == "Prediction":
             st.write(f"### {model_choice} Forecast")
             fig = plot_predictions(df, prediction, model_name=model_choice)
             st.pyplot(fig)
-
         except Exception as e:
             st.error(f"Error: {e}")
 
-# ✅ Logout Button
+# ✅ Logout Option
 st.sidebar.markdown("---")
 if st.sidebar.button("🚪 Logout"):
     st.session_state.logout_clicked = True
-    st.rerun()
+    st.experimental_rerun()
