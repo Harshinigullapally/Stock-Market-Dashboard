@@ -1,4 +1,6 @@
 import yfinance as yf
+@st.cache_data(ttl=3600)
+import time
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
