@@ -111,7 +111,7 @@ if st.session_state["page"] == "wishlist":
 stock_notifications()
 
 # ✅ Sidebar Navigation
-if selected_option == "Stock Dashboard":
+if selected_tab == "Stock Dashboard":
     st.sidebar.header("Navigation")
     selected_tab = st.sidebar.radio("Select a section:", [
     "Stock Analysis", "Nasdaq Stock Visualization", "News Update", "Stock Assistant",
