@@ -212,7 +212,6 @@ elif selected_tab == "Quarterly Analysis":
     """)
     trend_prediction()
     
-@st.cache_data(ttl=3600)
 elif selected_tab == "Intrinsic Value":
     intrinsic_value_page()
 
