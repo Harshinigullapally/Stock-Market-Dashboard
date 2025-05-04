@@ -110,7 +110,6 @@ if st.session_state["page"] == "wishlist":
 # ✅ Notifications
 stock_notifications()
 
-@st.cache_data(ttl=3600)
 # ✅ Sidebar Navigation
 if selected_option == "Stock Dashboard":
 st.sidebar.header("Navigation")
